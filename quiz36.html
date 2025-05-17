@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione Concorso Operatore Socio Sanitario - Modulo 7</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            margin: 0;
+            padding: 20px;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
+            to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; }
+        }
+
+        #timer {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5em;
+            color: #00eaff;
+            text-shadow: 0 0 5px #00eaff;
+        }
+
+        .question-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .question-box {
+            width: 40px;
+            height: 40px;
+            margin: 8px;
+            background: linear-gradient(45deg, #333, #555);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .question-box:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question-box.answered {
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        .question h3 {
+            margin: 0 0 15px 0;
+            color: #ffffff;
+            font-size: 1.6em;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background: linear-gradient(90deg, #00eaff, #00b8d4);
+            color: #fff;
+            box-shadow: 0 0 15px #00eaff;
+        }
+
+        .option.wrong {
+            background: linear-gradient(90deg, #ff5252, #d81b60);
+            color: #fff;
+            box-shadow: 0 0 15px #ff5252;
+        }
+
+        .lamp {
+            display: none;
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+            transition: transform 0.3s ease;
+        }
+
+        .lamp:hover {
+            transform: scale(1.2);
+        }
+
+        .explanation {
+            margin-top: 15px;
+            font-style: italic;
+            color: #f0f0f0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            animation: slideIn 0.5s ease;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .nav-button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            box-shadow: 0 0 10px #ffd700;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-button:disabled {
+            background: #666;
+            color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        button#submit {
+            display: block;
+            width: 250px;
+            margin: 20px auto;
+            padding: 15px;
+            background: linear-gradient(45deg, #00eaff, #00b8d4);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.3em;
+            box-shadow: 0 0 15px #00eaff;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        button#submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #00eaff;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.8em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Simulazione Concorso Operatore Socio Sanitario - Modulo 7</h1>
+        <div class="question-nav" id="questionNav"></div>
+        <div id="timer">Tempo rimanente: <span id="time">30:00</span></div>
+        <div id="quiz"></div>
+        <div class="navigation">
+            <button class="nav-button" id="prev" disabled>⬅ Indietro</button>
+            <button class="nav-button" id="next">Avanti ➡</button>
+        </div>
+        <button id="submit">Invia Risposte</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Array di domande (181-210) con opzioni mescolate casualmente
+        const questions = [
+            {
+                question: "Quale parte del sistema nervoso regola le funzioni involontarie come il battito cardiaco?",
+                options: ["Sistema nervoso somatico", "Sistema nervoso autonomo", "Sistema nervoso centrale"],
+                correct: "Sistema nervoso autonomo",
+                explanation: "Il sistema nervoso autonomo (SNA), composto dai sistemi simpatico e parasimpatico, regola funzioni involontarie come il battito cardiaco, la respirazione e la digestione. Il sistema nervoso somatico controlla i movimenti volontari, mentre il sistema nervoso centrale (cervello e midollo spinale) integra le informazioni. Gli OSS devono monitorare parametri vitali influenzati dal SNA, come la frequenza cardiaca, e segnalare anomalie."
+            },
+            {
+                question: "Cos’è la frequenza cardiaca?",
+                options: ["Il numero di respirazioni al minuto", "Il numero di battiti cardiaci al minuto", "La pressione del sangue nelle arterie"],
+                correct: "Il numero di battiti cardiaci al minuto",
+                explanation: "La frequenza cardiaca è il numero di battiti cardiaci al minuto, generalmente tra 60 e 100 bpm a riposo negli adulti. Non misura le respirazioni (frequenza respiratoria) né la pressione arteriosa. Gli OSS devono misurare la frequenza cardiaca con precisione, utilizzando il polso o strumenti come il pulsossimetro, e segnalare valori anomali, come tachicardia o bradicardia."
+            },
+            {
+                question: "Quale è il valore normale della frequenza cardiaca a riposo in un adulto?",
+                options: ["40-60 battiti al minuto", "60-100 battiti al minuto", "100-120 battiti al minuto"],
+                correct: "60-100 battiti al minuto",
+                explanation: "In un adulto sano a riposo, la frequenza cardiaca normale varia tra 60 e 100 battiti al minuto, secondo le linee guida sanitarie. Valori inferiori (bradicardia) o superiori (tachicardia) possono indicare problemi cardiaci o sistemici. Gli OSS devono controllare regolarmente la frequenza cardiaca nei pazienti, soprattutto in quelli con patologie cardiache, e segnalare deviazioni."
+            },
+            {
+                question: "Cos’è la tachicardia?",
+                options: ["Una frequenza cardiaca inferiore a 60 bpm", "Una frequenza cardiaca superiore a 100 bpm", "Una frequenza cardiaca irregolare"],
+                correct: "Una frequenza cardiaca superiore a 100 bpm",
+                explanation: "La tachicardia è una condizione in cui la frequenza cardiaca supera i 100 battiti al minuto a riposo, spesso causata da stress, febbre, anemia o patologie cardiache. Non è una frequenza inferiore a 60 bpm (bradicardia) né necessariamente irregolare (aritmia). Gli OSS devono riconoscere la tachicardia, monitorare i pazienti e segnalarla immediatamente."
+            },
+            {
+                question: "Cos’è la bradicardia?",
+                options: ["Una frequenza cardiaca superiore a 100 bpm", "Una frequenza cardiaca inferiore a 60 bpm", "Una frequenza cardiaca irregolare"],
+                correct: "Una frequenza cardiaca inferiore a 60 bpm",
+                explanation: "La bradicardia è una frequenza cardiaca inferiore a 60 battiti al minuto a riposo, che può essere fisiologica (es. atleti) o patologica (es. blocco cardiaco). Non è una frequenza superiore a 100 bpm (tachicardia) né irregolare (aritmia). Gli OSS devono misurare la frequenza cardiaca e segnalare la bradicardia, soprattutto se accompagnata da sintomi come vertigini."
+            },
+            {
+                question: "Cos’è la frequenza respiratoria?",
+                options: ["Il numero di battiti cardiaci al minuto", "Il numero di respirazioni al minuto", "La quantità di ossigeno nel sangue"],
+                correct: "Il numero di respirazioni al minuto",
+                explanation: "La frequenza respiratoria è il numero di atti respiratori (inspirazioni ed espirazioni) al minuto, generalmente 12-20 a riposo negli adulti. Non misura i battiti cardiaci né l’ossigeno nel sangue (saturazione). Gli OSS devono contare le respirazioni osservando il torace e segnalare anomalie, come tachipnea o bradipnea."
+            },
+            {
+                question: "Quale è il valore normale della frequenza respiratoria a riposo in un adulto?",
+                options: ["8-12 respirazioni al minuto", "12-20 respirazioni al minuto", "20-30 respirazioni al minuto"],
+                correct: "12-20 respirazioni al minuto",
+                explanation: "La frequenza respiratoria normale a riposo in un adulto è di 12-20 respirazioni al minuto, secondo le linee guida sanitarie. Valori inferiori (bradipnea) o superiori (tachipnea) possono indicare problemi respiratori o sistemici. Gli OSS devono monitorare la frequenza respiratoria nei pazienti, specialmente in quelli con patologie polmonari, e segnalare deviazioni."
+            },
+            {
+                question: "Cos’è la tachipnea?",
+                options: ["Una frequenza respiratoria inferiore a 12 al minuto", "Una frequenza respiratoria superiore a 20 al minuto", "Una respirazione irregolare"],
+                correct: "Una frequenza respiratoria superiore a 20 al minuto",
+                explanation: "La tachipnea è una frequenza respiratoria superiore a 20 atti al minuto a riposo, spesso associata a febbre, ansia, ipossia o patologie polmonari. Non è una frequenza inferiore a 12 (bradipnea) né irregolare. Gli OSS devono riconoscere la tachipnea, monitorare l’ossigenazione e segnalarla, garantendo il comfort del paziente."
+            },
+            {
+                question: "Cos’è la bradipnea?",
+                options: ["Una frequenza respiratoria superiore a 20 al minuto", "Una frequenza respiratoria inferiore a 12 al minuto", "Una respirazione rumorosa"],
+                correct: "Una frequenza respiratoria inferiore a 12 al minuto",
+                explanation: "La bradipnea è una frequenza respiratoria inferiore a 12 atti al minuto a riposo, che può essere causata da sedativi, ipotermia o patologie neurologiche. Non è una frequenza superiore a 20 (tachipnea) né rumorosa. Gli OSS devono monitorare la bradipnea e segnalarla, soprattutto se accompagnata da cianosi o confusione."
+            },
+            {
+                question: "Cos’è la pressione arteriosa?",
+                options: ["Il numero di battiti cardiaci al minuto", "La forza esercitata dal sangue sulle pareti delle arterie", "La quantità di ossigeno nel sangue"],
+                correct: "La forza esercitata dal sangue sulle pareti delle arterie",
+                explanation: "La pressione arteriosa è la forza esercitata dal sangue sulle pareti delle arterie durante la sistole (contrazione) e la diastole (rilassamento) del cuore. Non misura i battiti cardiaci né l’ossigeno. Gli OSS devono misurare la pressione arteriosa con un bracciale e segnalare valori anomali, come ipertensione o ipotensione."
+            },
+            {
+                question: "Quali sono i valori normali della pressione arteriosa in un adulto?",
+                options: ["90/60 mmHg o inferiore", "120/80 mmHg o inferiore", "140/90 mmHg o superiore"],
+                correct: "120/80 mmHg o inferiore",
+                explanation: "Secondo l’OMS, i valori normali della pressione arteriosa in un adulto a riposo sono inferiori a 120/80 mmHg (sistolica/diastolica). Valori di 90/60 mmHg o inferiori indicano ipotensione, mentre 140/90 mmHg o superiori indicano ipertensione. Gli OSS devono misurare la pressione regolarmente e segnalare deviazioni, specialmente in pazienti con patologie cardiovascolari."
+            },
+            {
+                question: "Cos’è l’ipertensione?",
+                options: ["Una pressione arteriosa inferiore a 90/60 mmHg", "Una pressione arteriosa superiore a 140/90 mmHg", "Una pressione arteriosa irregolare"],
+                correct: "Una pressione arteriosa superiore a 140/90 mmHg",
+                explanation: "L’ipertensione è una condizione in cui la pressione arteriosa è persistentemente superiore a 140/90 mmHg, aumentando il rischio di infarto o ictus. Non è una pressione inferiore a 90/60 mmHg (ipotensione) né irregolare. Gli OSS devono monitorare la pressione arteriosa nei pazienti ipertesi e segnalare valori elevati, garantendo aderenza alla terapia."
+            },
+            {
+                question: "Cos’è l’ipotensione?",
+                options: ["Una pressione arteriosa superiore a 140/90 mmHg", "Una pressione arteriosa inferiore a 90/60 mmHg", "Una pressione arteriosa irregolare"],
+                correct: "Una pressione arteriosa inferiore a 90/60 mmHg",
+                explanation: "L’ipotensione è una pressione arteriosa inferiore a 90/60 mmHg, che può causare vertigini, svenimenti o shock. Non è una pressione superiore a 140/90 mmHg (ipertensione) né irregolare. Gli OSS devono riconoscere l’ipotensione, monitorare i pazienti e segnalarla, specialmente in caso di sintomi come debolezza."
+            },
+            {
+                question: "Cos’è la saturazione di ossigeno?",
+                options: ["La pressione del sangue nelle arterie", "La percentuale di ossigeno legata all’emoglobina", "Il numero di respirazioni al minuto"],
+                correct: "La percentuale di ossigeno legata all’emoglobina",
+                explanation: "La saturazione di ossigeno (SpO2) è la percentuale di emoglobina nel sangue legata all’ossigeno, misurata con un pulsossimetro. Valori normali sono 95-100%. Non misura la pressione arteriosa né la frequenza respiratoria. Gli OSS devono monitorare la SpO2 nei pazienti con problemi respiratori e segnalare valori bassi, come <90%."
+            },
+            {
+                question: "Quali sono i valori normali della saturazione di ossigeno?",
+                options: ["85-90%", "95-100%", "70-80%"],
+                correct: "95-100%",
+                explanation: "La saturazione di ossigeno normale in un adulto sano è tra 95 e 100%, secondo le linee guida sanitarie. Valori inferiori a 90% indicano ipossiemia e richiedono attenzione. Gli OSS devono utilizzare il pulsossimetro per monitorare la SpO2, specialmente in pazienti con patologie polmonari, e segnalare anomalie."
+            },
+            {
+                question: "Cos’è l’ipossiemia?",
+                options: ["Un aumento dell’ossigeno nel sangue", "Una riduzione dell’ossigeno nel sangue", "Un aumento della pressione arteriosa"],
+                correct: "Una riduzione dell’ossigeno nel sangue",
+                explanation: "L’ipossiemia è una condizione in cui i livelli di ossigeno nel sangue arterioso sono bassi, spesso rilevata con una saturazione <90%. Può essere causata da patologie polmonari o cardiache. Non è un aumento dell’ossigeno né della pressione. Gli OSS devono riconoscere i segni di ipossiemia, come cianosi, e segnalarli immediatamente."
+            },
+            {
+                question: "Cos’è la temperatura corporea?",
+                options: ["La pressione del sangue nelle arterie", "Il calore prodotto e mantenuto dal corpo", "Il numero di battiti cardiaci al minuto"],
+                correct: "Il calore prodotto e mantenuto dal corpo",
+                explanation: "La temperatura corporea è il calore prodotto e mantenuto dal corpo, regolato dall’ipotalamo, generalmente intorno a 36.5-37.5°C. Non misura la pressione arteriosa né i battiti cardiaci. Gli OSS devono misurare la temperatura con termometri (es. ascellare, orale) e segnalare valori anomali, come febbre o ipotermia."
+            },
+            {
+                question: "Quali sono i valori normali della temperatura corporea in un adulto?",
+                options: ["35-36°C", "36.5-37.5°C", "38-39°C"],
+                correct: "36.5-37.5°C",
+                explanation: "La temperatura corporea normale in un adulto è tra 36.5 e 37.5°C, misurata ascellarmente. Valori inferiori a 35°C indicano ipotermia, mentre superiori a 38°C indicano febbre. Gli OSS devono misurare la temperatura con precisione e segnalare deviazioni, specialmente in pazienti immunocompromessi."
+            },
+            {
+                question: "Cos’è la febbre?",
+                options: ["Una temperatura corporea inferiore a 35°C", "Una temperatura corporea superiore a 38°C", "Una temperatura corporea irregolare"],
+                correct: "Una temperatura corporea superiore a 38°C",
+                explanation: "La febbre è un aumento della temperatura corporea superiore a 38°C, spesso causata da infezioni, infiammazioni o altre condizioni. Non è una temperatura inferiore a 35°C (ipotermia) né irregolare. Gli OSS devono monitorare la febbre, garantire idratazione e comfort, e segnalarla per interventi terapeutici."
+            },
+            {
+                question: "Cos’è l’ipotermia?",
+                options: ["Una temperatura corporea superiore a 38°C", "Una temperatura corporea inferiore a 35°C", "Una temperatura corporea irregolare"],
+                correct: "Una temperatura corporea inferiore a 35°C",
+                explanation: "L’ipotermia è una temperatura corporea inferiore a 35°C, che può essere causata da esposizione al freddo, shock o patologie metaboliche. Non è una temperatura superiore a 38°C (febbre) né irregolare. Gli OSS devono riconoscere l’ipotermia, coprire il paziente con coperte e segnalarla immediatamente."
+            },
+            {
+                question: "Quale strumento si usa per misurare la frequenza cardiaca?",
+                options: ["Termometro", "Pulsossimetro", "Sfigmomanometro"],
+                correct: "Pulsossimetro",
+                explanation: "Il pulsossimetro è uno strumento che misura la frequenza cardiaca e la saturazione di ossigeno rilevando il flusso sanguigno al dito. Il termometro misura la temperatura, e lo sfigmomanometro la pressione arteriosa. Gli OSS devono utilizzare il pulsossimetro correttamente e segnalare valori anomali."
+            },
+            {
+                question: "Quale strumento si usa per misurare la pressione arteriosa?",
+                options: ["Pulsossimetro", "Sfigmomanometro", "Termometro"],
+                correct: "Sfigmomanometro",
+                explanation: "Lo sfigmomanometro, spesso con un bracciale, è usato per misurare la pressione arteriosa (sistolica e diastolica). Il pulsossimetro misura la saturazione e la frequenza cardiaca, e il termometro la temperatura. Gli OSS devono usare lo sfigmomanometro con tecnica corretta e segnalare valori anomali."
+            },
+            {
+                question: "Quale strumento si usa per misurare la saturazione di ossigeno?",
+                options: ["Sfigmomanometro", "Pulsossimetro", "Termometro"],
+                correct: "Pulsossimetro",
+                explanation: "Il pulsossimetro misura la saturazione di ossigeno (SpO2) e la frequenza cardiaca, applicato solitamente al dito. Lo sfigmomanometro misura la pressione, e il termometro la temperatura. Gli OSS devono applicare il pulsossimetro correttamente, garantendo una lettura accurata, e segnalare valori bassi."
+            },
+            {
+                question: "Quale strumento si usa per misurare la temperatura corporea?",
+                options: ["Pulsossimetro", "Termometro", "Sfigmomanometro"],
+                correct: "Termometro",
+                explanation: "Il termometro (digitale, a infrarossi o a mercurio) è usato per misurare la temperatura corporea in siti come ascella, bocca o orecchio. Il pulsossimetro misura la saturazione, e lo sfigmomanometro la pressione. Gli OSS devono scegliere il metodo appropriato e segnalare febbre o ipotermia."
+            },
+            {
+                question: "Cos’è la cianosi?",
+                options: ["Un aumento della temperatura corporea", "Una colorazione bluastra di pelle e mucose", "Un aumento della pressione arteriosa"],
+                correct: "Una colorazione bluastra di pelle e mucose",
+                explanation: "La cianosi è una colorazione bluastra di pelle, labbra o unghie dovuta a una ridotta ossigenazione del sangue, spesso associata a ipossiemia o problemi circolatori. Non è un aumento della temperatura né della pressione. Gli OSS devono riconoscere la cianosi e segnalarla immediatamente, garantendo ossigenazione."
+            },
+            {
+                question: "Quale è la causa principale della cianosi?",
+                options: ["Ipertensione", "Ipossia", "Febbre"],
+                correct: "Ipossia",
+                explanation: "L’ipossia, ovvero una carenza di ossigeno nei tessuti, è la causa principale della cianosi, poiché riduce l’ossigenazione dell’emoglobina. L’ipertensione e la febbre non sono cause dirette. Gli OSS devono monitorare i pazienti per segni di ipossia, come cianosi o dispnea, e segnalarli."
+            },
+            {
+                question: "Cos’è la dispnea?",
+                options: ["Una difficoltà respiratoria", "Un aumento della frequenza cardiaca", "Una colorazione bluastra della pelle"],
+                correct: "Una difficoltà respiratoria",
+                explanation: "La dispnea è la sensazione di difficoltà respiratoria o mancanza di fiato, spesso causata da patologie polmonari, cardiache o ansia. Non è un aumento della frequenza cardiaca né una colorazione bluastra (cianosi). Gli OSS devono osservare la dispnea, monitorare l’ossigenazione e garantire una posizione confortevole al paziente."
+            },
+            {
+                question: "Quale è la posizione migliore per un paziente con dispnea?",
+                options: ["Supina", "Prona", "Seduta o semi-seduta"],
+                correct: "Seduta o semi-seduta",
+                explanation: "La posizione seduta o semi-seduta (di Fowler) facilita la respirazione nei pazienti con dispnea, migliorando l’espansione polmonare e riducendo la pressione sul diaframma. Le posizioni supina e prona possono peggiorare la respirazione. Gli OSS devono aiutare il paziente a mantenere questa posizione e monitorare la SpO2."
+            },
+            {
+                question: "Cos’è l’edema?",
+                options: ["Una colorazione bluastra della pelle", "Un accumulo di liquido nei tessuti", "Un aumento della temperatura corporea"],
+                correct: "Un accumulo di liquido nei tessuti",
+                explanation: "L’edema è un accumulo di liquido nei tessuti interstiziali, spesso visibile come gonfiore (es. alle caviglie), causato da insufficienza cardiaca, renale o alterazioni dell’equilibrio idro-salino. Non è una colorazione bluastra né un aumento della temperatura. Gli OSS devono monitorare l’edema, misurare il peso corporeo e segnalarlo."
+            },
+            {
+                question: "Quale è la causa principale dell’edema polmonare?",
+                options: ["Insufficienza cardiaca sinistra", "Infezione polmonare", "Ipertensione"],
+                correct: "Insufficienza cardiaca sinistra",
+                explanation: "L’edema polmonare è causato principalmente dall’insufficienza cardiaca sinistra, che aumenta la pressione nei capillari polmonari, portando a un accumulo di liquido negli alveoli. Le infezioni polmonari e l’ipertensione non sono cause primarie. Gli OSS devono riconoscere i sintomi, come dispnea grave, e segnalarli immediatamente, garantendo ossigeno."
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        // Carica i quadratini di navigazione
+        function loadQuestionNav() {
+            const navDiv = document.getElementById("questionNav");
+            questions.forEach((_, index) => {
+                const box = document.createElement("div");
+                box.classList.add("question-box");
+                box.textContent = index + 1;
+                box.addEventListener("click", () => {
+                    showQuestion(index);
+                });
+                navDiv.appendChild(box);
+            });
+        }
+
+        // Carica il quiz
+        function loadQuiz() {
+            const quizDiv = document.getElementById("quiz");
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("question");
+                questionDiv.id = `question-${index}`;
+                questionDiv.innerHTML = `
+                    <h3>${index + 1}. ${q.question}</h3>
+                    ${q.options.map((opt, i) => `
+                        <div class="option" data-value="${opt}">
+                            <input type="radio" name="q${index}" value="${opt}" id="q${index}_${i}">
+                            <label for="q${index}_${i}">${opt}</label>
+                            <span class="lamp" id="lamp-${index}-${i}">💡</span>
+                        </div>
+                    `).join("")}
+                    <div class="explanation" id="exp-${index}">${q.explanation}</div>
+                `;
+                quizDiv.appendChild(questionDiv);
+
+                // Aggiungi evento per accendere il quadratino
+                const radios = questionDiv.querySelectorAll(`input[name="q${index}"]`);
+                radios.forEach(radio => {
+                    radio.addEventListener("change", () => {
+                        document.querySelectorAll(".question-box")[index].classList.add("answered");
+                    });
+                });
+            });
+            showQuestion(0); // Mostra la prima domanda
+        }
+
+        // Mostra la domanda corrente
+        function showQuestion(index) {
+            document.querySelectorAll(".question").forEach(q => q.classList.remove("active"));
+            document.getElementById(`question-${index}`).classList.add("active");
+            currentQuestion = index;
+
+            // Gestione stato pulsanti
+            document.getElementById("prev").disabled = currentQuestion === 0;
+            document.getElementById("next").disabled = currentQuestion === questions.length - 1;
+        }
+
+        // Timer (30 minuti)
+        let timeLeft = 30 * 60;
+        function startTimer() {
+            const timer = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById("time").textContent = 
+                    `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswers();
+                }
+            }, 1000);
+        }
+
+        // Controllo risposte e feedback visivo
+        function checkAnswers() {
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const options = document.querySelectorAll(`#question-${index} .option`);
+
+                options.forEach(option => {
+                    const value = option.getAttribute("data-value");
+                    if (value === q.correct) {
+                        option.classList.add("correct");
+                        const lamp = option.querySelector(".lamp");
+                        lamp.style.display = "inline";
+                        lamp.addEventListener("click", () => {
+                            const explanation = document.getElementById(`exp-${index}`);
+                            explanation.style.display = "block";
+                        });
+                    }
+                });
+
+                if (selected) {
+                    if (selected.value === q.correct) {
+                        score++;
+                    } else {
+                        selected.parentElement.classList.add("wrong");
+                    }
+                }
+            });
+
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = `Punteggio: ${score} / ${questions.length}`;
+            document.getElementById("submit").disabled = true;
+            document.getElementById("prev").disabled = true;
+            document.getElementById("next").disabled = true;
+
+            // Disabilita i radio button dopo l'invio
+            document.querySelectorAll("input[type=radio]").forEach(radio => {
+                radio.disabled = true;
+            });
+        }
+
+        // Inizializzazione
+        window.onload = () => {
+            loadQuestionNav();
+            loadQuiz();
+            startTimer();
+
+            document.getElementById("prev").addEventListener("click", () => {
+                if (currentQuestion > 0) showQuestion(currentQuestion - 1);
+            });
+
+            document.getElementById("next").addEventListener("click", () => {
+                if (currentQuestion < questions.length - 1) showQuestion(currentQuestion + 1);
+            });
+
+            document.getElementById("submit").addEventListener("click", checkAnswers);
+        };
+    </script>
+</body>
+</html>
